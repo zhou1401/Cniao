@@ -2,7 +2,6 @@ package com.kaige.cniao.fragment;
 
 
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -45,13 +44,8 @@ import com.squareup.okhttp.RequestBody;
  */
 
 public class HomeFragment extends Fragment {
-
-
     private SliderLayout mSliderLayout;
-
 //    private PagerIndicator  indicator;
-
-
     private RecyclerView mRecyclerView;
     private OkHttpHelper httpHelper = OkHttpHelper.getInstance();
 
@@ -59,21 +53,16 @@ public class HomeFragment extends Fragment {
     private Gson mGson=new Gson();
     private List<Banner> mBanner;
 
-
     private static  final  String TAG="HomeFragment";
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-
         View view = inflater.inflate(R.layout.fragment_home,container,false);
         mSliderLayout = (SliderLayout) view.findViewById(R.id.slider);
-
 //        indicator= (PagerIndicator) view.findViewById(R.id.custom_indicator);
-
         requestImages();
+        initSlider();
         initRecyclerView(view);
-
         return  view;
     }
     private void requestImages(){
@@ -104,26 +93,19 @@ public class HomeFragment extends Fragment {
             }
         });*/
         httpHelper.get(url, new SpotsCallBack<List<Banner>>(getContext()){
-
-
             @Override
             public void onSuccess(Response response, List<Banner> banners) {
-
                 mBanner = banners;
                 initSlider();
             }
-
             @Override
             public void onError(Response response, int code, Exception e) {
-
             }
         });
     }
 
     private void initRecyclerView(View view) {
-
-        /*mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         List<HomeCategory> datas = new ArrayList<>(15);
 
         HomeCategory category = new HomeCategory("热门活动",R.drawable.img_big_1,R.drawable.img_1_small1,R.drawable.img_1_small2);
@@ -140,19 +122,11 @@ public class HomeFragment extends Fragment {
         category = new HomeCategory("超值购",R.drawable.img_big_0,R.drawable.img_0_small1,R.drawable.img_0_small2);
         datas.add(category);
 
-
         mAdatper = new HomeCatgoryAdapter(datas);
-
         mRecyclerView.setAdapter(mAdatper);
-
         mRecyclerView.addItemDecoration(new DividerItemDecortion());
-
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));*/
-        mRecyclerView=(RecyclerView)view.findViewById(R.id.recyclerview);
-        httpHelper.get();
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
     }
-
-
     private void initSlider(){
 /*       DefaultSliderView textSliderView = new DefaultSliderView(this.getActivity());
         textSliderView.image("http://m.360buyimg.com/mobilecms/s480x180_jfs/t2278/35/409524152/232719/1d29f7a9/56078dbfNae4f16a3.jpg");
@@ -201,11 +175,9 @@ public class HomeFragment extends Fragment {
 
     }
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
-
         mSliderLayout.stopAutoCycle();
     }
 }
