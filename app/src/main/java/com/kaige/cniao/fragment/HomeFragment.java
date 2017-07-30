@@ -18,13 +18,18 @@ import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.kaige.cniao.Contants;
 import com.kaige.cniao.R;
 import com.kaige.cniao.adapter.DividerItemDecortion;
 import com.kaige.cniao.adapter.HomeCatgoryAdapter;
 import com.kaige.cniao.bean.Banner;
+import com.kaige.cniao.bean.Campaign;
+import com.kaige.cniao.bean.HomeCampaign;
 import com.kaige.cniao.bean.HomeCategory;
+import com.kaige.cniao.http.BaseCallback;
 import com.kaige.cniao.http.OkHttpHelper;
 import com.kaige.cniao.http.SpotsCallBack;
+import com.kaige.cniao.util.ToastUtil;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.Response;
@@ -54,6 +59,8 @@ public class HomeFragment extends Fragment {
     private List<Banner> mBanner;
 
     private static  final  String TAG="HomeFragment";
+    private HomeCatgoryAdapter mAdapter;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -61,7 +68,6 @@ public class HomeFragment extends Fragment {
         mSliderLayout = (SliderLayout) view.findViewById(R.id.slider);
 //        indicator= (PagerIndicator) view.findViewById(R.id.custom_indicator);
         requestImages();
-        initSlider();
         initRecyclerView(view);
         return  view;
     }
@@ -105,7 +111,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void initRecyclerView(View view) {
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+        /*mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         List<HomeCategory> datas = new ArrayList<>(15);
 
         HomeCategory category = new HomeCategory("热门活动",R.drawable.img_big_1,R.drawable.img_1_small1,R.drawable.img_1_small2);
@@ -125,8 +131,50 @@ public class HomeFragment extends Fragment {
         mAdatper = new HomeCatgoryAdapter(datas);
         mRecyclerView.setAdapter(mAdatper);
         mRecyclerView.addItemDecoration(new DividerItemDecortion());
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));*/
+        mRecyclerView=(RecyclerView)view.findViewById(R.id.recyclerview);
+        httpHelper.get(Contants.API.CAMPAIGN_HOME, new BaseCallback<List<HomeCampaign>>() {
+            @Override
+            public void onBeforeRequest(Request request) {
+
+            }
+
+            @Override
+            public void onFailure(Request request, Exception e) {
+
+            }
+
+            @Override
+            public void onResponse(Response response) {
+
+            }
+
+            @Override
+            public void onSuccess(Response response, List<HomeCampaign> homeCampaigns) {
+                initData(homeCampaigns);
+            }
+
+            @Override
+            public void onError(Response response, int code, Exception e) {
+
+            }
+        });
     }
+
+    private void initData(List<HomeCampaign> homeCampaigns) {
+        mAdapter = new HomeCatgoryAdapter(homeCampaigns, getActivity());
+        mAdapter.setOnCampaignClickListener(new HomeCatgoryAdapter.OnCampaignClickListener() {
+            @Override
+            public void onClick(View view, Campaign campaign) {
+                ToastUtil.show(getActivity(),"title="+campaign.getTitle());
+            }
+        });
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.addItemDecoration(new DividerItemDecortion());
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+
+    }
+
     private void initSlider(){
 /*       DefaultSliderView textSliderView = new DefaultSliderView(this.getActivity());
         textSliderView.image("http://m.360buyimg.com/mobilecms/s480x180_jfs/t2278/35/409524152/232719/1d29f7a9/56078dbfNae4f16a3.jpg");
